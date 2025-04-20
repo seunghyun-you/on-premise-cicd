@@ -16,10 +16,10 @@ pipeline {
                         usernameVariable: 'NEXUS_USER', 
                         passwordVariable: 'NEXUS_PASS')]) {
                         IMAGE_VERSION = sh(
-                            script: """
+                            script: '''
                             curl -s -u "$NEXUS_USER:$NEXUS_PASS" ${env.NEXUS_URL}/v2/app/tags/list \\
                             | jq -r '.tags[]' | sort -Vr | head -n 1
-                            """,
+                            ''',
                             returnStdout: true
                         ).trim()
 
