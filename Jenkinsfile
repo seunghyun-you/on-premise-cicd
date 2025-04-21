@@ -23,6 +23,13 @@ pipeline {
 
                         def NEXUS_URL = env.NEXUS_URL
 
+                        def CURL_RESULT = sh(
+                            script: "curl -s ${NEXUS_URL}/v2/app/tags/list",
+                            returnStdout: true
+                        )
+                        echo "${CURL_RESULT}"
+
+
                         env.IMAGE_VERSION = sh(
                             script: "curl -s ${NEXUS_URL}/v2/app/tags/list | jq -r '.tags[]' | sort -Vr | head -n 1",
                             returnStdout: true
