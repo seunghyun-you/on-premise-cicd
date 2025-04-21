@@ -28,7 +28,7 @@ pipeline {
                             | jq -r '.tags[]' | sort -Vr | head -n 1''',
                             returnStdout: true
                         ).trim()
-                        echo "${IMAGE_VERSION}"
+                        echo "${env.IMAGE_VERSION}"
 
                         
                         def CLEAN = env.IMAGE_VERSION.replace("v", "")
