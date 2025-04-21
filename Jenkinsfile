@@ -24,8 +24,7 @@ pipeline {
                         def NEXUS_URL = env.NEXUS_URL
 
                         env.IMAGE_VERSION = sh(
-                            script: '''curl -s -u ${NEXUS_USER}:${NEXUS_PASS} ${NEXUS_URL}/v2/app/tags/list \\
-                            | jq -r '.tags[]' | sort -Vr | head -n 1''',
+                            script: '''curl -s ${NEXUS_URL}/v2/app/tags/list | jq -r '.tags[]' | sort -Vr | head -n 1''',
                             returnStdout: true
                         ).trim()
                         echo "${env.IMAGE_VERSION}"
