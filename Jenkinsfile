@@ -1,6 +1,10 @@
-def IMAGE_VERSION
 pipeline {
 	agent any
+    environment (
+        IMAGE_VERSION = ''
+        NEW_IMAGE_VERSION = ''
+    )
+
 	stages {
         stage("Checkout") {
             steps {
@@ -15,25 +19,28 @@ pipeline {
                         credentialsId: 'nexus-credential', 
                         usernameVariable: 'NEXUS_USER', 
                         passwordVariable: 'NEXUS_PASS')]) {
-                        IMAGE_VERSION = sh(
-                            script: '''
-                            curl -s -u "$NEXUS_USER:$NEXUS_PASS" ${env.NEXUS_URL}/v2/app/tags/list \\
+
+                        def NEXUS_URL = env.NEXUS_URL
+                        
+                        env.IMAGE_VERSION = sh(
+                            script: """
+                            curl -s -u "${NEXUS_USER}:${NEXUS_PASS}" ${NEXUS_URL}/v2/app/tags/list \\
                             | jq -r '.tags[]' | sort -Vr | head -n 1
-                            ''',
+                            """,
                             returnStdout: true
                         ).trim()
 
                         
-                        def CLEAN = IMAGE_VERSION.replace("v", "")
+                        def CLEAN = env.IMAGE_VERSION.replace("v", "")
                         def parts = CLEAN.tokenize('.')
                         def MAJOR = parts[0] as int
                         def MINOR = parts[1] as int
                         def PATCH = parts[2] as int
 
                         def NEW_PATCH = PATCH + 1
-                        def NEW_IMAGE_VERSION = "v${MAJOR}.${MINOR}.${NEW_PATCH}"
+                        env.NEW_IMAGE_VERSION = "v${MAJOR}.${MINOR}.${NEW_PATCH}"
                     }
-                    echo "${env.IMAGE_REPO}:${NEW_IMAGE_VERSION}"
+                    echo "${env.IMAGE_REPO}:${env.NEW_IMAGE_VERSION}"
                     app = docker.build("${env.IMAGE_REPO}")
                 }
             }
@@ -43,7 +50,7 @@ pipeline {
             steps {
                 script {
                     docker.withRegistry("https://${env.IMAGE_REPO}", "nexus-credential") {            
-                        app.push(NEW_IMAGE_VERSION)
+                        app.push("${env.NEW_IMAGE_VERSION}")
                         app.push("latest")
                     }
                 }
