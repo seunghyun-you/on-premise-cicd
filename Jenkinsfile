@@ -42,7 +42,7 @@ pipeline {
                         echo "${env.NEW_IMAGE_VERSION}"
                     }
                     echo "${env.IMAGE_REPO}:${env.NEW_IMAGE_VERSION}"
-                    app = docker.build("${env.IMAGE_REPO}")
+                    app = docker.build("${env.IMAGE_REPO}:${env.NEW_IMAGE_VERSION}")
                 }
             }
         }
