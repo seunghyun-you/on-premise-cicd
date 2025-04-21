@@ -26,11 +26,21 @@ pipeline {
                             returnStdout: true
                         )
                         echo "${CURL_RESULT}"
-                        // def JQ_RESULT = sh(
-                        //     script: "echo '${CURL_RESULT}' | jq -r .tags[]",
-                        //     returnStdout: true
-                        // )
-                        // echo "${JQ_RESULT}"
+                        def JQ_RESULT = sh(
+                            script: "echo '${CURL_RESULT}' | jq -r .tags[]",
+                            returnStdout: true
+                        )
+                        echo "${JQ_RESULT}"
+                        def SORT_RESULT = sh(
+                            script: "echo '${CURL_RESULT}' | jq -r .tags[] | sort -Vr",
+                            returnStdout: true
+                        )
+                        echo "${SORT_RESULT}"
+                        def HEAD_RESULT = sh(
+                            script: "echo '${CURL_RESULT}' | jq -r .tags[] | sort -Vr | head -n 1",
+                            returnStdout: true
+                        )
+                        echo "${HEAD_RESULT}"
 
                         env.IMAGE_VERSION = sh(
                             // script: "curl -s ${NEXUS_URL}/v2/app/tags/list | jq -r .tags[] | sort -Vr | head -n 1",
