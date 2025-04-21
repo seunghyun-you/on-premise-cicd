@@ -19,14 +19,16 @@ pipeline {
                         credentialsId: 'nexus-credential', 
                         usernameVariable: 'NEXUS_USER', 
                         passwordVariable: 'NEXUS_PASS')]) {
+                        echo "${NEXUS_USER}:${NEXUS_PASS}"
 
                         def NEXUS_URL = env.NEXUS_URL
-                        
+
                         env.IMAGE_VERSION = sh(
                             script: '''curl -s -u ${NEXUS_USER}:${NEXUS_PASS} ${NEXUS_URL}/v2/app/tags/list \\
                             | jq -r '.tags[]' | sort -Vr | head -n 1''',
                             returnStdout: true
                         ).trim()
+                        echo "${IMAGE_VERSION}"
 
                         
                         def CLEAN = env.IMAGE_VERSION.replace("v", "")
@@ -37,6 +39,7 @@ pipeline {
 
                         def NEW_PATCH = PATCH + 1
                         env.NEW_IMAGE_VERSION = "v${MAJOR}.${MINOR}.${NEW_PATCH}"
+                        echo "${env.NEW_IMAGE_VERSION}"
                     }
                     echo "${env.IMAGE_REPO}:${env.NEW_IMAGE_VERSION}"
                     app = docker.build("${env.IMAGE_REPO}")
