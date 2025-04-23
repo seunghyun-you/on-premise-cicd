@@ -63,7 +63,7 @@ pipeline {
                         credentialsId: 'github-credential', 
                         usernameVariable: 'GIT_USER', 
                         passwordVariable: 'GIT_PASS')]) {
-                        sh "git clone https://${GIT_USER}:${GIT_PASS}@github.com/username/repo.git"
+                        sh "git clone https://${GIT_USER}:${GIT_PASS}@github.com/seunghyun-you/on-premise-cicd-manifest.git"
 
                         dir('repo/app') {
                             sh "sed -i 's/tag: \"v[0-9]\\+\\.[0-9]\\+\\.[0-9]\\+\"/tag: \"${NEW_IMAGE_VERSION}\"/g' values.yaml"
