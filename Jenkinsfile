@@ -69,7 +69,7 @@ pipeline {
                         // sh "cd on-premise-cicd-manifest"
                         sh "sed -i 's/tag: \"v[0-9]\\+\\.[0-9]\\+\\.[0-9]\\+\"/tag: \"${NEW_IMAGE_VERSION}\"/g' on-premise-cicd-manifest/app/values.yaml"
                         
-                        sh "git add values.yaml"
+                        sh "git add ."
                         sh "git commit -m 'Update image tag to ${NEW_IMAGE_VERSION}'"
                         sh "git push origin main"
                     }
