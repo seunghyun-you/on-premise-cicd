@@ -62,7 +62,7 @@ pipeline {
                     withCredentials([gitUsernamePassword(credentialsId: 'github-credential')]) {
                         sh "rm -rf *"
                         sh "rm -rf .git"
-                        sh "git clone https://github.com/seunghyun-you/on-premise-cicd-manifest.git"
+                        sh "git clone git@github.com:seunghyun-you/on-premise-cicd-manifest.git"
                         sh "git config --global user.email 'jenkins@example.com'"
                         sh "git config --global user.name 'Jenkins CI'"
 
