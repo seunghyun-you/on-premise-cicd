@@ -59,21 +59,18 @@ pipeline {
             agent any
             steps {
                 script {
-                    withCredentials([usernamePassword(
-                        credentialsId: 'github-credential', 
-                        usernameVariable: 'GIT_USER', 
-                        passwordVariable: 'GIT_PASS')]) {
-                        sh "git clone https://${GIT_USER}:${GIT_PASS}@github.com/seunghyun-you/on-premise-cicd-manifest.git"
+                    withCredentials([gitUsernamePassword(credentialsId: 'github-credential')]) {
+                        sh "rm -rf *"
+                        sh "rm -rf .git"
+                        sh "git clone https://github.com/seunghyun-you/on-premise-cicd-manifest.git"
+                        sh "git config --global user.email 'jenkins@example.com'"
+                        sh "git config --global user.name 'Jenkins CI'"
 
-                        dir('repo/app') {
-                            sh "sed -i 's/tag: \"v[0-9]\\+\\.[0-9]\\+\\.[0-9]\\+\"/tag: \"${NEW_IMAGE_VERSION}\"/g' values.yaml"
-                            
-                            sh "git config --global user.email 'jenkins@example.com'"
-                            sh "git config --global user.name 'Jenkins CI'"
-                            sh "git add values.yaml"
-                            sh "git commit -m 'Update image tag to ${NEW_IMAGE_VERSION}'"
-                            sh "git push origin main"
-                        }
+                        sh "sed -i 's/tag: \"v[0-9]\\+\\.[0-9]\\+\\.[0-9]\\+\"/tag: \"${NEW_IMAGE_VERSION}\"/g' values.yaml"
+                        
+                        sh "git add values.yaml"
+                        sh "git commit -m 'Update image tag to ${NEW_IMAGE_VERSION}'"
+                        sh "git push origin main"
                     }
                 }
             }
