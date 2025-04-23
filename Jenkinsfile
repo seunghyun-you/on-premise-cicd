@@ -59,7 +59,7 @@ pipeline {
             agent any
             steps {
                 script {
-                    withCredentials([gitUsernamePassword(credentialsId: 'github-credential')]) {
+                    withCredentials([gitUsernamePassword(credentialsId: 'github-accesskey')]) {
                         sh "rm -rf *"
                         sh "rm -rf .git"
                         sh "git clone git@github.com:seunghyun-you/on-premise-cicd-manifest.git"
