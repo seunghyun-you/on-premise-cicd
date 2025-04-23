@@ -66,7 +66,8 @@ pipeline {
                         sh "git config --global user.email 'jenkins@example.com'"
                         sh "git config --global user.name 'Jenkins CI'"
 
-                        sh "sed -i 's/tag: \"v[0-9]\\+\\.[0-9]\\+\\.[0-9]\\+\"/tag: \"${NEW_IMAGE_VERSION}\"/g' values.yaml"
+                        sh "cd on-premise-cicd-manifest"
+                        sh "sed -i 's/tag: \"v[0-9]\\+\\.[0-9]\\+\\.[0-9]\\+\"/tag: \"${NEW_IMAGE_VERSION}\"/g' app/values.yaml"
                         
                         sh "git add values.yaml"
                         sh "git commit -m 'Update image tag to ${NEW_IMAGE_VERSION}'"
