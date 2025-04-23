@@ -55,5 +55,28 @@ pipeline {
                 }
             }
         }
+        stage('Image Update') {
+            agent any
+            steps {
+                script {
+                    withCredentials([usernamePassword(
+                        credentialsId: 'github-credential', 
+                        usernameVariable: 'GIT_USER', 
+                        passwordVariable: 'GIT_PASS')]) {
+                        sh "git clone https://${GIT_USER}:${GIT_PASS}@github.com/username/repo.git"
+
+                        dir('repo/app') {
+                            sh "sed -i 's/tag: \"v[0-9]\\+\\.[0-9]\\+\\.[0-9]\\+\"/tag: \"${NEW_IMAGE_VERSION}\"/g' values.yaml"
+                            
+                            sh "git config --global user.email 'jenkins@example.com'"
+                            sh "git config --global user.name 'Jenkins CI'"
+                            sh "git add values.yaml"
+                            sh "git commit -m 'Update image tag to ${NEW_IMAGE_VERSION}'"
+                            sh "git push origin main"
+                        }
+                    }
+                }
+            }
+        }
     }
 }
