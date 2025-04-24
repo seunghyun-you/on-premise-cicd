@@ -7,10 +7,10 @@ const HOST = process.env.HOST || '0.0.0.0';
 
 //
 const pool = new Pool({
-  host: process.env.DB_HOST || 'svc-postgres-db', // 쿠버네티스 서비스 이름
+  host: process.env.DB_HOST || 'svc-postgres-db',
   port: process.env.DB_PORT || 5432,
   user: process.env.DB_USER || 'postgres',
-//   password: process.env.DB_PASSWORD || 'password', // 실제 환경에서는 안전한 방법으로 비밀번호 관리 필요
+  password: process.env.DB_PASSWORD || 'qwer1234',
   database: process.env.DB_NAME || 'node'
 });
 
