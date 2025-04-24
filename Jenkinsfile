@@ -61,7 +61,7 @@ pipeline {
                             def PATCH = parts[2] as int
 
                             def NEW_PATCH = PATCH + 1
-                            def NEW_IMAGE_VERSION = "v${MAJOR}.${MINOR}.${NEW_PATCH}"
+                            NEW_IMAGE_VERSION = "v${MAJOR}.${MINOR}.${NEW_PATCH}"
                             echo "${NEW_IMAGE_VERSION}"
                         }
                         dir("./${service.NAME}") {
