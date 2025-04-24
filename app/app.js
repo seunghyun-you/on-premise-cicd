@@ -7,10 +7,10 @@ const HOST = process.env.HOST || '0.0.0.0';
 
 //
 const pool = new Pool({
-  host: process.env.DB_HOST || 'svc-postgres-db',
+  host: process.env.DB_HOST || 'localhost',
   port: process.env.DB_PORT || 5432,
-  user: process.env.DB_USER || 'postgres',
-  password: process.env.DB_PASSWORD || 'qwer1234',
+  user: process.env.DB_USER || 'test',
+  password: process.env.DB_PASSWORD || 'test1234',
   database: process.env.DB_NAME || 'node'
 });
 
