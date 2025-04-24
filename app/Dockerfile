@@ -5,7 +5,7 @@ COPY . .
 RUN npm install
 
 # APP RUNNING
-FROM gcr.io/distroless/nodejs22
+FROM node:22-alpine
 WORKDIR /app
 
 COPY --from=BUILD_IMAGE /app/app.js ./app.js
