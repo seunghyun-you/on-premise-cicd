@@ -25,15 +25,15 @@ app.get('/', (req, res) => {
   `);
 });
 
-app.get('/:reqpath', (req, res) => {
-  return res.status(200).send(`
-    <div style="background-color:${req.params.reqpath}">
-      <h2> sample application </h2>
-      <h2> Hostname : ${os.hostname()} </h2>
-      <h2> RequestPath : ${req.params.reqpath} </h2>
-    </div>
-  `);
-});
+// app.get('/:reqpath', (req, res) => {
+//   return res.status(200).send(`
+//     <div style="background-color:${req.params.reqpath}">
+//       <h2> sample application </h2>
+//       <h2> Hostname : ${os.hostname()} </h2>
+//       <h2> RequestPath : ${req.params.reqpath} </h2>
+//     </div>
+//   `);
+// });
 
 app.get('/db', async (req, res) => {
   try {
