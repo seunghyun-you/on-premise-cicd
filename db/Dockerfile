@@ -13,4 +13,5 @@ RUN dpkg-reconfigure -f noninteractive tzdata
 
 # postgresql.conf 파일 업로드
 COPY postgresql.conf /etc/postgresql/postgresql.conf
+COPY pg_hba.conf /etc/postgresql/pg_hba.conf
 CMD ["postgres", "-c", "config_file=/etc/postgresql/postgresql.conf"]
