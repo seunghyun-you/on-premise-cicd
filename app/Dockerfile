@@ -11,4 +11,4 @@ WORKDIR /app
 COPY --from=BUILD_IMAGE /app/app.js ./app.js
 COPY --from=BUILD_IMAGE /app/node_modules ./node_modules
 
-ENTRYPOINT ["app.js"]
+ENTRYPOINT ["node", "app.js"]
