@@ -31,11 +31,15 @@ app.get('/', (req, res) => {
 
 app.get('/color/:reqpath', (req, res) => {
   return res.status(200).send(`
-    <div style="background-color:${req.params.reqpath}">
-      <h2> sample application </h2>
-      <h2> Hostname : ${os.hostname()} </h2>
-      <h2> RequestPath : ${req.params.reqpath} </h2>
-    </div>
+    <html>
+      <body>
+        <div style="background-color:${req.params.reqpath}">
+          <h2> sample application </h2>
+          <h2> Hostname : ${os.hostname()} </h2>
+          <h2> RequestPath : ${req.params.reqpath} </h2>
+        </div>
+      </body>
+    </html>
   `);
 });
 
