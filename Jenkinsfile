@@ -4,7 +4,15 @@ pipeline {
 	stages {
         stage("Checkout") {
             steps {
-                checkout scm
+                checkout(
+                    [$class: 'GitSCM', 
+                    branches: [[name: "${params.BRANCH_NAME}"]],
+                    userRemoteConfigs: [[
+                        url: 'https://github.com/seunghyun-you/on-premise-cicd',
+                        credentialsId: 'github-accesskey'
+                    ]]
+                    ]
+                )
             }
         }
         stage('Create Variable') {
@@ -60,9 +68,15 @@ pipeline {
                             def MINOR = parts[1] as int
                             def PATCH = parts[2] as int
 
-                            def NEW_PATCH = PATCH + 1
-                            NEW_IMAGE_VERSION = "v${MAJOR}.${MINOR}.${NEW_PATCH}"
-                            echo "${NEW_IMAGE_VERSION}"
+                            if (params.BRANCH_NAME.contains('dev')) {
+                                def NEW_PATCH = PATCH + 1
+                                NEW_IMAGE_VERSION = "v${MAJOR}.${MINOR}.${NEW_PATCH}"
+                                echo "${NEW_IMAGE_VERSION}"
+                            } else if (params.BRANCH_NAME.contains('main')) {
+                                def NEW_MINOR = MINOR + 1
+                                NEW_IMAGE_VERSION = "v${MAJOR}.${NEW_MINOR}.0"
+                                echo "${NEW_IMAGE_VERSION}"
+                            }
                         }
                         dir("./${service.NAME}") {
                             echo "${env.NEXUS_URL}/${service.NAME}:${NEW_IMAGE_VERSION}"
@@ -82,8 +96,7 @@ pipeline {
             agent any
             steps {
                 script {
-                    builds.each { build ->
-                        // docker.withRegistry("https://${env.NEXUS_URL}/${build.NAME}", "nexus-credential") {            
+                    builds.each { build ->  
                         docker.withRegistry("https://${env.NEXUS_URL}", "nexus-credential") {     
                             build.ARTIFACT.push("${build.VERSION}")
                             build.ARTIFACT.push("latest")
