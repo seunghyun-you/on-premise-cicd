@@ -6,7 +6,7 @@ pipeline {
             steps {
                 checkout(
                     [$class: 'GitSCM', 
-                    branches: [[name: "${params.BRANCH_NAME}"]],
+                    branches: [[name: "${params.BRANCH}"]],
                     userRemoteConfigs: [[
                         url: 'https://github.com/seunghyun-you/on-premise-cicd',
                         credentialsId: 'github-accesskey'
@@ -68,11 +68,11 @@ pipeline {
                             def MINOR = parts[1] as int
                             def PATCH = parts[2] as int
 
-                            if (params.BRANCH_NAME.contains('dev')) {
+                            if (params.BRANCH.contains('dev')) {
                                 def NEW_PATCH = PATCH + 1
                                 NEW_IMAGE_VERSION = "v${MAJOR}.${MINOR}.${NEW_PATCH}"
                                 echo "${NEW_IMAGE_VERSION}"
-                            } else if (params.BRANCH_NAME.contains('main')) {
+                            } else if (params.BRANCH.contains('main')) {
                                 def NEW_MINOR = MINOR + 1
                                 NEW_IMAGE_VERSION = "v${MAJOR}.${NEW_MINOR}.0"
                                 echo "${NEW_IMAGE_VERSION}"
