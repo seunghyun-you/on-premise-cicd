@@ -18,10 +18,14 @@ const pool = new Pool({
 const app = express();
 app.get('/', (req, res) => {
   return res.status(200).send(`
-  <div>
-    <h2> sample application </h2>
-    <h2> Hostname : ${os.hostname()} </h2>
-  </div>
+    <html>
+      <body>
+        <div>
+          <h2> sample application </h2>
+          <h2> Hostname : ${os.hostname()} </h2>
+        </div>
+      </body>
+    </html>
   `);
 });
 
