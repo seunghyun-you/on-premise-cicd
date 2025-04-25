@@ -16,18 +16,24 @@ const pool = new Pool({
 
 // 
 const app = express();
+app.set('view engine', 'ejs');
+app.set('views', './views');
+
 app.get('/', (req, res) => {
-  return res.status(200).send(`
-    <html>
-      <body>
-        <div>
-          <h2> sample application </h2>
-          <h2> Hostname : ${os.hostname()} </h2>
-        </div>
-      </body>
-    </html>
-  `);
+  res.render('index', { hostname: os.hostname() });
 });
+// app.get('/', (req, res) => {
+//   return res.status(200).send(`
+//     <html>
+//       <body>
+//         <div>
+//           <h2> sample application </h2>
+//           <h2> Hostname : ${os.hostname()} </h2>
+//         </div>
+//       </body>
+//     </html>
+//   `);
+// });
 
 app.get('/color/:reqpath', (req, res) => {
   return res.status(200).send(`
