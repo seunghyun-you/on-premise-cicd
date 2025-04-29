@@ -48,7 +48,6 @@ CI/CD에 대한 기본적인 개념 정리하고, 로컬 단말기(홈 서버)�
 |          |   롤백 전략    |                자동 롤백, 수동 롤백, 점진적 롤백                |         -          |
 |          | 배포 환경 구성 |                      운영, 개발, 스테이징                       |         -          |
 
-
 ### 주요 선정 전략/구성요소에 대한 개요
 
 #### ① Git Flow
@@ -110,14 +109,12 @@ COPY --from=BUILD_IMAGE /app/views ./views
 COPY --from=BUILD_IMAGE /app/node_modules ./node_modules
 
 ENTRYPOINT ["node", "app.js"]
-
 ```
 
 #### ⑤ Pull Pattern 1(CI)
 CI 과정에서 소스 코드 통합, 빌드, 테스트 등의 과정을 마친 후 자동으로 CD 단계로 이어질 수 있게 트리거 역할을 직접 수행하는 방식이다. CI 도구에서 빌드 아티팩트(컨테이너 이미지)를 만들어 Configuration Repository에 기록된 파드 이미지의 버전을 직접 수정한다. Operator(ArgoCD 등)는 Configuration Repository의 변경사항을 탐지하고, CI 도구를 통해 변경되거나 인프라 매니저를 통해 변경된 내용이 탐지되면 배포 환경과 동기화를 진행한다.
 
 ![alt text](./_image/pull_pattern.png)
-
 
 
 
@@ -375,20 +372,22 @@ stage('Image Update') {
 }
 ```
 
-## 동작 과정 
+## 실제 동작 과정 
 
-### Nexus에 저장된 현재 최신 이미지 버전 확인
+### dev 브랜치 배포
+
+#### ① Nexus에 저장된 현재 최신 이미지 버전 확인
 
 ```bash
 $ curl -s 10.0.0.20:8082/v2/app/tags/list | jq -r .tags[] | sort -Vr | head -n 1                 
 v1.1.0
 ```
 
-### ArgoCD 배포 버전 확인
+#### ② ArgoCD 배포 버전 확인
 
 ![alt text](./_image/argocd_app_version_check.png)
 
-### Branch 전환
+#### ③ Branch 전환
 
 ```bash
 $ git branch
@@ -396,7 +395,7 @@ $ git branch
   main
 ```
 
-### 소스 코드 변경 확인
+#### ④ 소스 코드 변경 확인
 
 ```bash
 $ git status
@@ -408,19 +407,33 @@ Changes not staged for commit:
         modified:   app/views/index.ejs
 ```
 
-### 소스 코드 Push
+#### ⑤ 소스 코드 Push
 
 ```bash
 $ git add . && git commit -m "update app code" && git push origin dev
 ```
 
-### Jenkins 상태 확인
+#### ⑥ Jenkins 상태 확인
 
 ![alt text](./_image/jenkins.png)
 
-### ArgoCD 배포 버전 확인
+#### ⑦ ArgoCD 배포 버전 확인
 
 ![alt text](./_image/argocd_app_version_check_02.png)
+
+### main 브랜치 배포
+
+#### ① GitHub PR 생성
+
+![alt text](./_image/pull_request.png)
+
+#### ② Jenkins 상태 확인
+
+![alt text](./_image/jenkins_02.png)
+
+#### ③ ArgoCD 배포 버전 확인
+
+![alt text](./_image/argocd_app_version_check_03.png)
 
 ## ACTION ITEM
 - [ ] 컨테이너 이미지 보안 스캐너 
