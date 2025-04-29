@@ -27,27 +27,26 @@ CI/CD에 대한 기본적인 개념 정리하고, 로컬 단말기(홈 서버)�
 |             |   중앙레포지토리    |      github, bono git server, gitea, gitlab, bitbucket      | github  |
 |    빌드     |      빌드 도구      |                npm, maven, gradle, ant, make                |   npm   |
 |             |       CI 도구       | jenkins, github actions, gitlab CI/CD, circle CI, travis CI | jenkins |
-|   테스트    |   단위/통합테스트   |                JUnit, Jest, Mocha, Selenium                 |    -    |
+|   테스트    |     단위 테스트     |                JUnit, Jest, Mocha, Selenium                 |    -    |
 |             |    보안스캔 도구    |           Trivy, Clair, Anchore, Snyk, SonarQube            |    -    |
 | 이미지 관리 | 컨테이너 레지스트리 |                  Docker Hub, Harbor, Nexus                  |  Nexus  |
 |    배포     |      배포도구       |                       ArgoCD, Flux CD                       | ArgoCD  |
 
 ### CI/CD 단계별 전략 및 구성 요소
-|   단계   |       분류       |                     선택 가능한 전략 / 구성                     |        선정        |
-| :------: | :--------------: | :-------------------------------------------------------------: | :----------------: |
-| 소스제어 |   브랜치 전략    |         Git Flow, GitHub Flow, GitLab Flow, Trunk-based         |      Git Flow      |
-|          |    병합 전략     | Fast-Forward, Merge commit, Squash and merge, Rebase and merge  |  Squash and merge  |
-|          |    태깅 전략     |               Semantic, Date-based, Build number                |      Semantic      |
-|   빌드   |   트리거 방식    |            Poll SCM, Webhook, 수동 트리거, 스케줄링             |      Poll SCM      |
-|          |   병렬화 전략    |           단일 작업, 파이프라인 병렬화, 매트릭스 빌드           |     단일 작업      |
-|          | 이미지 빌드 전략 |                        Multi-stage 빌드                         |  Multi-stage 빌드  |
-|  테스트  |    단위테스트    |          전체 테스트, 변경 기반 테스트, 계층별 테스트           |         -          |
-|          |   통합 테스트    | Using Real Dependencies, Mock/Stub/Fake 사용, Contract Testing  |         -          |
-|          |   이미지 스캔    |  빌드 중 스캔, 레지스트리 스캔, 빌드 후 CI 파이프라인 내 스캔   |         -          |
-|   배포   |   트리거 방식    | Push Pattern, Pull Pattern 1(CI), Pull Pattern 2(Image Updater) | Pull Pattern 1(CI) |
-|          |    배포 전략     |           Blue/Green, Canary, Rolling update, Canary            |         -          |
-|          |    롤백 전략     |                자동 롤백, 수동 롤백, 점진적 롤백                |         -          |
-|          |  배포 환경 구성  |                      운영, 개발, 스테이징                       |         -          |
+|   단계   |      분류      |                     선택 가능한 전략 / 구성                     |        선정        |
+| :------: | :------------: | :-------------------------------------------------------------: | :----------------: |
+| 소스제어 |  브랜치 전략   |         Git Flow, GitHub Flow, GitLab Flow, Trunk-based         |      Git Flow      |
+|          |   병합 전략    |        Merge commit, Squash and merge, Rebase and merge         |  Squash and merge  |
+|          |   태깅 전략    |               Semantic, Date-based, Build number                |      Semantic      |
+|   빌드   |  트리거 방식   |            Poll SCM, Webhook, 수동 트리거, 스케줄링             |      Poll SCM      |
+|          |  병렬화 전략   |           단일 작업, 파이프라인 병렬화, 매트릭스 빌드           |     단일 작업      |
+|          |  이미지 빌드   |                        Multi-stage 빌드                         |  Multi-stage 빌드  |
+|  테스트  |   단위테스트   |          전체 테스트, 변경 기반 테스트, 계층별 테스트           |         -          |
+|          |  이미지 스캔   |  빌드 중 스캔, 레지스트리 스캔, 빌드 후 CI 파이프라인 내 스캔   |         -          |
+|   배포   |  트리거 방식   | Push Pattern, Pull Pattern 1(CI), Pull Pattern 2(Image Updater) | Pull Pattern 1(CI) |
+|          |   배포 전략    |           Blue/Green, Canary, Rolling update, Canary            |         -          |
+|          |   롤백 전략    |                자동 롤백, 수동 롤백, 점진적 롤백                |         -          |
+|          | 배포 환경 구성 |                      운영, 개발, 스테이징                       |         -          |
 
 ### 주요 선정 전략/구성요소에 대한 개요
 
@@ -79,21 +78,36 @@ Semver가 가지는 문제점이 있는데, 개발자들 마다 버전업의 경
 
 ![alt text](./_image/semver.png)
 
+> [!TIP] ArgoCD와 latest 태그의 업데이트 감지
+> ArgoCD는 기본적으로 이미지 태그가 변경되지 않으면 업데이트가 필요하다고 인식하지 않는다. lastest 태그의 컨테이너 이미지에 변경이 발생했어도 태그 이름 자체는 동일하기 때문에 ArgoCD는 변경을 감지하지 못한다.
+> `imagePullPolicy: Always` 를 설정해도 이미지의 변경사항이 발생했을 때 업데이트를 진행하는 것이 아니라 매니페스트 파일 자체에 변경이 발생 했을 때 업데이트가 진행된다.
+> 이미지의 내용만 변경 되고 매니페스트에는 변화가 없다면, 자동으로 감지되지 않는다.
+
+> [!NOTE] 실무에서는 특정 버전 태그 사용 권장 
+> - 명확한 버전 추적과 감사 가능: 문제 발생 시 어떤 버전에서 문제가 되는지 명확하게 확인 가능
+> - 안정적인 롤백: latest를 사용할 경우 과거 버전의 이미지가 어떤 것이었는지 알기 어려움
+> - 배포 환경 일관성 지원: 특전 버전 태그를 사용할 경우 동일한 버전 배포가 보장되기 때문에 예상치 못한 차이를 방지
+> - 의도하지 않은 배포 방지: latest 태그를 사용하면 운영 환경에 준비되지 않은 변경사항이 자동으로 배포될 수 있음
+
 #### ④ Multi-stage 빌드
 빌드 단계와 실행 단계를 분리하여 최종 이미지 크기 최소화하는 방식이다.
 
 ```Dockerfile
-# 빌드 단계
-FROM node:22 AS build
+# IMAGE BUILD
+FROM node:22 AS BUILD_IMAGE
 WORKDIR /app
-COPY package*.json ./
-RUN npm install
 COPY . .
-RUN npm run build
+RUN npm install
 
-# 실행 단계
-FROM nginx:alpine
-COPY --from=build /app/dist /usr/share/nginx/html
+# APP RUNNING
+FROM node:22-alpine
+WORKDIR /app
+
+COPY --from=BUILD_IMAGE /app/app.js ./app.js
+COPY --from=BUILD_IMAGE /app/views ./views
+COPY --from=BUILD_IMAGE /app/node_modules ./node_modules
+
+ENTRYPOINT ["node", "app.js"]
 ```
 
 #### ⑤ Pull Pattern 1(CI)
@@ -127,23 +141,230 @@ CI 과정에서 소스 코드 통합, 빌드, 테스트 등의 과정을 마친 
 |   5   |  nexus  | 127.0.0.1 |   8081    | 10.0.0.20  |  8081   |   http   |   web_ui    |
 |   6   |  nexus  | 127.0.0.1 |   8082    | 10.0.0.20  |  8082   |   http   |  registry   |
 |   7   | jenkins | 127.0.0.1 |   8080    | 10.0.0.20  |  8080   |   http   |   web_ui    |
-|   8   | jenkins | 127.0.0.1 |   8080    | 10.0.0.20  |  8080   |   http   |   web_ui    |
-|   9   | ingress | 127.0.0.1 |    80     | 10.0.0.100 |   80    |   http   | web_service |
-|  10   | ingress | 127.0.0.1 |    443    | 10.0.0.100 |   443   |  https   | web_service |
+|   8   | ingress | 127.0.0.1 |    80     | 10.0.0.100 |   80    |   http   | web_service |
+|   9   | ingress | 127.0.0.1 |    443    | 10.0.0.100 |   443   |  https   | web_service |
 |  11   | argocd  | 127.0.0.1 |   8443    | 10.0.0.101 |   443   |  https   |   web_ui    |
 
+### Workflow
+소스 코드의 기능이 개발된 이후 GitHub에 코드를 푸시한 다음 이루어지는 CI/CD 작업 흐름이다.
 
-### 개발자 워크 플로우
+> [!NOTE] 참고사항 
+> 버저닝 방식 테스트를 위해 구성한 환경으로 Configuration Repository와 배포 환경이 하나로 구성되어 있지만, 실제 환경 적용 시 브랜치와 쿠버네티스 클러스터를 추가 후 ArgoCD에서 Application을 환경별로 구성하면 된다.
+
+![alt text](./_image/workflow.png)
+
+#### dev branch workflow
+    ① 개발 소스 코드 GitHub `dev` 브랜치로 push
+
+    ② Jenkins에서 Poll SCM 방식으로 변경 사항을 감지 후 파이프라인 트리거 
+
+    ③ 빌드 후 아티팩트로 `PATCH` 버전을 업데이트 한 다음 Nexus 레지스트리에 이미지 저장
+
+    ④ Configuration Repository에 있는 values.yaml 파일에서 tag 값을 수정 후 push
+
+    ⑤ 변경사항을 감지한 ArgoCD에서 업데이트 된 컨테이너 이미지의 버전으로 배포 환경과 동기화 진행
+
+#### main branch workflow
+    ⑥ dev branch에서 `main` 브랜치 방향으로 `Pull Request` 생성
+
+    ⑦ Jenkins에서 Poll SCM 방식으로 변경 사항을 감지 후 파이프라인 트리거 
+
+    ⑧ 빌드 후 아티팩트로 `MINOR` 버전을 업데이트 한 다음 Nexus 레지스트리에 이미지 저장
+
+    ⑨ Configuration Repository에 있는 values.yaml 파일에서 tag 값을 수정 후 push
+
+    ⑩ 변경사항을 감지한 ArgoCD에서 업데이트 된 컨테이너 이미지의 버전으로 배포 환경과 동기화 진행
+
+### Container Diagram
+
+![alt text](./_image/container_diagram.png)
 
 
 
-## DEMO
+## CI 구현 상세 내역
 
+### Jenkinsfile Pipeline에서 Git Parameter Plug-in을 이용해 브랜치를 동적으로 처리
 
+#### ① Git Parameter Plug-in 설치 후 Parameter 설정
+
+![alt text](./_image/git_parameter.png)
+
+#### ② Jenkinsfile Pipeline 설정
+
+```groovy
+stage("Checkout") {
+    steps {
+        checkout(
+            [$class: 'GitSCM', 
+            branches: [[name: "${params.BRANCH}"]],
+            userRemoteConfigs: [[
+                url: 'https://github.com/seunghyun-you/on-premise-cicd',
+                credentialsId: 'github-accesskey'
+            ]]
+            ]
+        )
+    }
+}
+```
+
+### Source Code Repository의 폴더 마다 동적으로 빌드 작업을 진행하도록 처리
+
+#### ① Source Code Repository 폴더 구조
+
+```bash
+$ tree .
+.
+├── Jenkinsfile
+├── app
+│   ├── Dockerfile
+│   ├── app.js
+│   ├── package-lock.json
+│   ├── package.json
+│   └── views
+└── db
+    ├── Dockerfile
+    ├── pg_hba.conf
+    └── postgresql.conf
+```
+
+#### ② Jenkinsfile Pipeline에서 `when {changset ... }` 이용 변경된 폴더 이름을 배열에 저장
+
+```groovy
+stage('Create Variable') {
+    steps {
+        script {
+            services = []
+            builds = []
+        }
+    }
+}
+stage('App Directory Check') {
+    when { changeset "app/**" }
+    steps {
+        script {
+            services.add([NAME: 'app'])
+        }
+    }
+}
+stage('DB Directory Check') {
+    when { changeset "db/**" }
+    steps {
+        script {
+            services.add([NAME: 'db'])
+        }
+    }
+}
+```
+
+#### ③ 변경이 감지된 폴더를 지정해서 빌드 작업 진행 → 빌드 아티팩트는 builds 배열에 저장
+
+```groovy
+dir("./${service.NAME}") {
+    echo "${env.NEXUS_URL}/${service.NAME}:${NEW_IMAGE_VERSION}"
+    def artifact = docker.build("${env.NEXUS_URL}/${service.NAME}:${NEW_IMAGE_VERSION}")
+
+    builds.add([NAME: "${service.NAME}", 
+                VERSION: "${NEW_IMAGE_VERSION}",
+                ARTIFACT: artifact])
+
+    echo "Success ${service.NAME} images build: ${NEW_IMAGE_VERSION}"
+}
+```
+
+#### ④ 컨테이너 이미지 레지스트리에 빌드 아티팩트 저장
+
+```groovy
+stage('Push Image') {
+    agent any
+    steps {
+        script {
+            builds.each { build ->  
+                docker.withRegistry("https://${env.NEXUS_URL}", "nexus-credential") {     
+                    build.ARTIFACT.push("${build.VERSION}")
+                    build.ARTIFACT.push("latest")
+                }
+            }
+        }
+    }
+}
+```
+
+### Branch에 따라 동적으로 이미지 버저닝 처리
+
+#### ① 변경이 감지된 폴더에 맵핑된 컨테이너 이미지 레지스트리의 최신 버전 확인
+
+```groovy
+withCredentials([usernamePassword(
+    credentialsId: 'nexus-credential', 
+    usernameVariable: 'NEXUS_USER', 
+    passwordVariable: 'NEXUS_PASS')]) {
+
+    def CURL_RESULT = sh(
+        script: "curl -s -u ${NEXUS_USER}:${NEXUS_PASS} ${NEXUS_URL}/v2/${service.NAME}/tags/list",
+        returnStdout: true
+    )
+    echo "${CURL_RESULT}"
+
+    def IMAGE_VERSION = sh(
+        script: "echo '${CURL_RESULT}' | jq -r .tags[] | sort -Vr | head -n 1",
+        returnStdout: true
+    ).trim()
+    echo "${IMAGE_VERSION}"
+```
+
+#### ② dev, main 브랜치에 따라 다르게 이미지 버전 지정
+
+```groovy
+    def CLEAN = IMAGE_VERSION.replace("v", "")
+    def parts = CLEAN.tokenize('.')
+    def MAJOR = parts[0] as int
+    def MINOR = parts[1] as int
+    def PATCH = parts[2] as int
+
+    if (params.BRANCH.contains('dev')) {
+        def NEW_PATCH = PATCH + 1
+        NEW_IMAGE_VERSION = "v${MAJOR}.${MINOR}.${NEW_PATCH}"
+        echo "${NEW_IMAGE_VERSION}"
+    } else if (params.BRANCH.contains('main')) {
+        def NEW_MINOR = MINOR + 1
+        NEW_IMAGE_VERSION = "v${MAJOR}.${NEW_MINOR}.0"
+        echo "${NEW_IMAGE_VERSION}"
+    }
+}
+```
+
+### CI 단계에서 Configuration Repository의 매니페스트 파일 이미지 업데이트 처리
+
+```groovy
+stage('Image Update') {
+    agent any
+    steps {
+        script {
+            builds.each { build ->
+                withCredentials([gitUsernamePassword(credentialsId: 'github-accesskey')]) {
+                    sh "rm -rf *"
+                    sh "rm -rf .git"
+                    sh "git clone https://github.com/seunghyun-you/on-premise-cicd-manifest.git"
+                    sh "git config --global user.email 'jenkins@example.com'"
+                    sh "git config --global user.name 'Jenkins CI'"
+
+                    dir ('on-premise-cicd-manifest') {
+                        sh "sed -i 's/tag: \"v[0-9]\\+\\.[0-9]\\+\\.[0-9]\\+\"/tag: \"${build.VERSION}\"/g' ${build.NAME}/values.yaml"
+                        
+                        sh "git add ."
+                        sh "git commit -m 'Update image tag to ${build.VERSION}'"
+                        sh "git push origin main"
+                    }
+                }
+            }
+        }
+    }
+}
+```
 ## ACTION ITEM
-- 컨테이너 이미지 보안 스캐너 
-- 백업 시스템 테스트
-- 모니터링 시스템 (그라파나, 프로메테우스)
-- 로그 중앙 수집 시스템 (ELK Stack)
-- Resource Naming Rule(Convention) 수립
-- 버전 관리 및 브랜치 관리 세부 전략 수립
+- [ ] 컨테이너 이미지 보안 스캐너 
+- [ ] 백업 시스템 테스트
+- [ ] 모니터링 시스템 (그라파나, 프로메테우스)
+- [ ] 로그 중앙 수집 시스템 (ELK Stack)
+- [ ] Resource Naming Rule(Convention) 수립
+- [ ] 버전 관리 및 브랜치 관리 세부 전략 수립
