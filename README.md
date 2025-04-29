@@ -393,7 +393,7 @@ $ git branch
   main
 ```
 
-### 소스 코드 변경 후 Push
+### 소스 코드 변경 확인
 
 ```bash
 $ git status
@@ -404,6 +404,20 @@ Changes not staged for commit:
         modified:   app/app.js
         modified:   app/views/index.ejs
 ```
+
+### 소스 코드 Push
+
+```bash
+$ git add . && git commit -m "update app code" && git push origin dev
+```
+
+### Jenkins 상태 확인
+
+![alt text](./_image/jenkins.png)
+
+### ArgoCD 배포 버전 확인
+
+![alt text](./_image/argocd_app_version_check_02.png)
 
 ## ACTION ITEM
 - [ ] 컨테이너 이미지 보안 스캐너 
