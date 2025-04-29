@@ -372,6 +372,17 @@ stage('Image Update') {
 }
 ```
 
+## 동작 과정 
+
+### Nexus에 저장된 현재 최신 이미지 버전 확인
+
+```bash
+$ curl -s 10.0.0.20:8082/v2/app/tags/list | jq -r .tags[] | sort -Vr | head -n 1                 
+v1.1.0
+```
+
+### ArgoCD 배포 버전 확인
+
 ## ACTION ITEM
 - [ ] 컨테이너 이미지 보안 스캐너 
 - [ ] 백업 시스템 테스트
