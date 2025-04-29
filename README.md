@@ -383,6 +383,28 @@ v1.1.0
 
 ### ArgoCD 배포 버전 확인
 
+![alt text](./_image/argocd_app_version_check.png)
+
+### Branch 전환
+
+```bash
+$ git branch
+* dev
+  main
+```
+
+### 소스 코드 변경 후 Push
+
+```bash
+$ git status
+On branch dev
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+        modified:   app/app.js
+        modified:   app/views/index.ejs
+```
+
 ## ACTION ITEM
 - [ ] 컨테이너 이미지 보안 스캐너 
 - [ ] 백업 시스템 테스트
