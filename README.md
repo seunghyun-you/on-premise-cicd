@@ -78,12 +78,13 @@ Semver가 가지는 문제점이 있는데, 개발자들 마다 버전업의 경
 
 ![alt text](./_image/semver.png)
 
-> [!TIP] ArgoCD와 latest 태그의 업데이트 감지
-> ArgoCD는 기본적으로 이미지 태그가 변경되지 않으면 업데이트가 필요하다고 인식하지 않는다. lastest 태그의 컨테이너 이미지에 변경이 발생했어도 태그 이름 자체는 동일하기 때문에 ArgoCD는 변경을 감지하지 못한다.
-> `imagePullPolicy: Always` 를 설정해도 이미지의 변경사항이 발생했을 때 업데이트를 진행하는 것이 아니라 매니페스트 파일 자체에 변경이 발생 했을 때 업데이트가 진행된다.
-> 이미지의 내용만 변경 되고 매니페스트에는 변화가 없다면, 자동으로 감지되지 않는다.
+> <span style="color: #008000">[!TIP] ArgoCD와 latest 태그의 업데이트 감지</span>
+> - ArgoCD는 기본적으로 이미지 태그가 변경되지 않으면 업데이트가 필요하다고 인식하지 않는다. 
+> - lastest 태그의 컨테이너 이미지에 변경이 발생했어도 태그 이름 자체는 동일하기 때문에 ArgoCD는 변경을 감지하지 못한다.
+> - `imagePullPolicy: Always` 를 설정해도 매니페스트 파일 자체에 변경이 발생 했을 때 업데이트가 진행된다.
+> - 이미지의 내용만 변경 되고 매니페스트에는 변화가 없다면, 자동으로 감지되지 않는다.
 
-> [!NOTE] 실무에서는 특정 버전 태그 사용 권장 
+> <span style="color: #0000FF"> [!NOTE] 실무에서는 특정 버전 태그 사용 권장</span>
 > - 명확한 버전 추적과 감사 가능: 문제 발생 시 어떤 버전에서 문제가 되는지 명확하게 확인 가능
 > - 안정적인 롤백: latest를 사용할 경우 과거 버전의 이미지가 어떤 것이었는지 알기 어려움
 > - 배포 환경 일관성 지원: 특전 버전 태그를 사용할 경우 동일한 버전 배포가 보장되기 때문에 예상치 못한 차이를 방지
@@ -117,6 +118,7 @@ CI 과정에서 소스 코드 통합, 빌드, 테스트 등의 과정을 마친 
 
 
 
+
 ## Architecture
 
 ### System Diagram
@@ -146,38 +148,36 @@ CI 과정에서 소스 코드 통합, 빌드, 테스트 등의 과정을 마친 
 |  11   | argocd  | 127.0.0.1 |   8443    | 10.0.0.101 |   443   |  https   |   web_ui    |
 
 ### Workflow
-소스 코드의 기능이 개발된 이후 GitHub에 코드를 푸시한 다음 이루어지는 CI/CD 작업 흐름이다.
-
-> [!NOTE] 참고사항 
-> 버저닝 방식 테스트를 위해 구성한 환경으로 Configuration Repository와 배포 환경이 하나로 구성되어 있지만, 실제 환경 적용 시 브랜치와 쿠버네티스 클러스터를 추가 후 ArgoCD에서 Application을 환경별로 구성하면 된다.
+소스 코드의 기능이 개발된 이후 GitHub에 코드를 푸시한 다음 이루어지는 CI/CD 작업 흐름이다. 버저닝 방식 테스트를 위해 구성한 환경으로 Configuration Repository와 배포 환경이 하나로 구성되어 있지만, 실제 환경 적용 시 브랜치와 쿠버네티스 클러스터를 추가 후 ArgoCD에서 Application을 환경별로 구성하면 된다.
 
 ![alt text](./_image/workflow.png)
 
 #### dev branch workflow
-    ① 개발 소스 코드 GitHub `dev` 브랜치로 push
+① 개발 소스 코드 GitHub `dev` 브랜치로 push
 
-    ② Jenkins에서 Poll SCM 방식으로 변경 사항을 감지 후 파이프라인 트리거 
+② Jenkins에서 Poll SCM 방식으로 변경 사항을 감지 후 파이프라인 트리거 
 
-    ③ 빌드 후 아티팩트로 `PATCH` 버전을 업데이트 한 다음 Nexus 레지스트리에 이미지 저장
+③ 빌드 후 아티팩트로 `PATCH` 버전을 업데이트 한 다음 Nexus 레지스트리에 이미지 저장
 
-    ④ Configuration Repository에 있는 values.yaml 파일에서 tag 값을 수정 후 push
+④ Configuration Repository에 있는 values.yaml 파일에서 tag 값을 수정 후 push
 
-    ⑤ 변경사항을 감지한 ArgoCD에서 업데이트 된 컨테이너 이미지의 버전으로 배포 환경과 동기화 진행
+⑤ 변경사항을 감지한 ArgoCD에서 업데이트 된 컨테이너 이미지의 버전으로 배포 환경과 동기화 진행
 
 #### main branch workflow
-    ⑥ dev branch에서 `main` 브랜치 방향으로 `Pull Request` 생성
+⑥ dev branch에서 `main` 브랜치 방향으로 `Pull Request` 생성
 
-    ⑦ Jenkins에서 Poll SCM 방식으로 변경 사항을 감지 후 파이프라인 트리거 
+⑦ Jenkins에서 Poll SCM 방식으로 변경 사항을 감지 후 파이프라인 트리거 
 
-    ⑧ 빌드 후 아티팩트로 `MINOR` 버전을 업데이트 한 다음 Nexus 레지스트리에 이미지 저장
+⑧ 빌드 후 아티팩트로 `MINOR` 버전을 업데이트 한 다음 Nexus 레지스트리에 이미지 저장
 
-    ⑨ Configuration Repository에 있는 values.yaml 파일에서 tag 값을 수정 후 push
+⑨ Configuration Repository에 있는 values.yaml 파일에서 tag 값을 수정 후 push
 
-    ⑩ 변경사항을 감지한 ArgoCD에서 업데이트 된 컨테이너 이미지의 버전으로 배포 환경과 동기화 진행
+⑩ 변경사항을 감지한 ArgoCD에서 업데이트 된 컨테이너 이미지의 버전으로 배포 환경과 동기화 진행
 
 ### Container Diagram
 
 ![alt text](./_image/container_diagram.png)
+
 
 
 
@@ -259,15 +259,25 @@ stage('DB Directory Check') {
 #### ③ 변경이 감지된 폴더를 지정해서 빌드 작업 진행 → 빌드 아티팩트는 builds 배열에 저장
 
 ```groovy
-dir("./${service.NAME}") {
-    echo "${env.NEXUS_URL}/${service.NAME}:${NEW_IMAGE_VERSION}"
-    def artifact = docker.build("${env.NEXUS_URL}/${service.NAME}:${NEW_IMAGE_VERSION}")
+stage('Docker Build') {
+    agent any
+    steps {
+        script {
+            services.each { service ->
+                ...
+                dir("./${service.NAME}") {
+                    echo "${env.NEXUS_URL}/${service.NAME}:${NEW_IMAGE_VERSION}"
+                    def artifact = docker.build("${env.NEXUS_URL}/${service.NAME}:${NEW_IMAGE_VERSION}")
 
-    builds.add([NAME: "${service.NAME}", 
-                VERSION: "${NEW_IMAGE_VERSION}",
-                ARTIFACT: artifact])
+                    builds.add([NAME: "${service.NAME}", 
+                                VERSION: "${NEW_IMAGE_VERSION}",
+                                ARTIFACT: artifact])
 
-    echo "Success ${service.NAME} images build: ${NEW_IMAGE_VERSION}"
+                    echo "Success ${service.NAME} images build: ${NEW_IMAGE_VERSION}"
+                }
+            }
+        }
+    }
 }
 ```
 
@@ -361,6 +371,7 @@ stage('Image Update') {
     }
 }
 ```
+
 ## ACTION ITEM
 - [ ] 컨테이너 이미지 보안 스캐너 
 - [ ] 백업 시스템 테스트
