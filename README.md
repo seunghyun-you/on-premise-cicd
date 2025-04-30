@@ -12,7 +12,7 @@ CI/CD에 대한 기본적인 개념 정리하고, 로컬 단말기(홈 서버)�
 ### Continuous Delivery & Deployment
 코드 변경 사항이 반영된 애플리케이션이 언제든지 릴리스 될 수 있도록 준비 혹은 배포하는 단계다. 배포 아티팩트를 이용해서 배포 환경(운영, 개발, 스테이징 등)에 애플리케이션을 배포한다. 배포 단계에서 사용되는 아티팩트는 CI 단계에서 만들어진 컨테이너 이미지와 쿠버네티스 매니페스트와 같은 파일이 해당 된다. Delivery와 Deployment의 가장 큰 차이는 배포하는 단계에서 수동으로 승인하는 절차의 유무다. Deployment 방식은 전 과정을 자동으로 구성해서 배포까지 승인 없이 이루어지는데, Delivery는 수동으로 승인 후에 배포가 진행되는 방식이다. Deployment 방식을 구현하기 위해서는 엄격한 테스트 시나리오와 적절한 배포 방식을 선정해서 구성해야한다.
 
-![alt text](./_image/delivery_deployment.png)
+![alt text](./_image/delivery_deployment.png){: .center}
 
 
 
@@ -71,7 +71,7 @@ main, develop, feature, release, hotfix 5개의 브랜치를 사용하는 것을
 #### ② Squash and merge
 자식 브랜치에서 여러 가지 작업이 진행되면서 다수의 커밋이 만들어질 수 있는데, 이 때 부모 브랜치로 병합하는 과정에는 하나의 커밋으로 합쳐서 병합하는 방식이다. 부모 역할을 담당하는 메인 브랜치는 여러 커밋을 하나로 압축하여 관리하기 때문에 깔끔하게 이력을 유지할 수 있고 롤백이 용이해지지만, 세부적인 작업 내역을 메인 브랜치에서 파악하기 어렵다는 단점이 있다.
 
-![alt text](./_image/squash_and_merge.png)
+![alt text](./_image/squash_and_merge.png){: .center}
 
 #### ③ Semver(Semantic Versioning)
 MAJOR.MINOR.PATCH(예: 1.4.2) 체계를 따르는 버전 관리 방식이다. MAJOR 버전이 0으로 표시되는 경우 아직 개발단계에 있는 불안정한(unstable) 단계라는 의미다. MINOR 버전은 해당 버전 내에서 API 명세가 많이 바뀌지 않았고, 바뀌었더라도(API 기능 추가, 또는 삭제) 이전 버전에 대한 호환성을 보장한다. PATCH는 긴급한 버그 수정이나 사소한 업데이트가 발생한 경우 올라간다.
