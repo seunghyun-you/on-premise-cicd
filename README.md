@@ -136,7 +136,7 @@ CI 과정에서 소스 코드 통합, 빌드, 테스트 등의 과정을 마친 
 전체 시스템은 온프레미스 환경을 가정하고 로컬 단말기(홈 서버)에서 Virtual Box를 이용해 Virtual Machine 기반으로 구성되어 있다. Linux Server로 구성된 3대의 VM에 Kubespray를 이용해 Master 노드 1대, Worker 노드 2대로 구성해 Kubernetes Cluster 환경으로 구축되어 있다. 외부 연동을 위해 Nginx Controller, Metal LB를 구성하였고, IPtime의 포트 포워딩을 통해 로컬 네트워크 외부에서 접근할 수 있도록 구성되어 있다. 
 
 <p align="center">
-  <img src="./_image/system_diagram.png" style="width: 100%;">
+  <img src="./_image/system_diagram.png">
 </p>
 
 |  ID   |  Name   |        OS        |  CPU  | Memory |   VM IP   | Notes                                             |
@@ -164,7 +164,7 @@ CI 과정에서 소스 코드 통합, 빌드, 테스트 등의 과정을 마친 
 소스 코드의 기능이 개발된 이후 GitHub에 코드를 푸시한 다음 이루어지는 CI/CD 작업 흐름이다. 버저닝 방식 테스트를 위해 구성한 환경으로 Configuration Repository와 배포 환경이 하나로 구성되어 있지만, 실제 환경 적용 시 브랜치와 쿠버네티스 클러스터를 추가 후 ArgoCD에서 Application을 환경별로 구성하면 된다.
 
 <p align="center">
-  <img src="./_image/workflow.png" style="width: 100%;">
+  <img src="./_image/workflow.png" style="width: 70%;">
 </p>
 
 #### dev branch workflow
