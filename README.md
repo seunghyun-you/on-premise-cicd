@@ -55,6 +55,7 @@ CI/CD에 대한 기본적인 개념 정리와 함께 로컬 단말기(홈 서버
 |          |   배포 전략    |           Blue/Green, Canary, Rolling update, Canary            |         -          |
 |          |   롤백 전략    |                자동 롤백, 수동 롤백, 점진적 롤백                |         -          |
 |          | 배포 환경 구성 |                      운영, 개발, 스테이징                       |         -          |
+|          |   배포 방식    |            Continuous Delivery, Continous Deploy                | Continous Deploy  |
 
 
 ### 주요 선정 전략/구성요소에 대한 개요
