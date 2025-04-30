@@ -110,6 +110,7 @@ COPY --from=BUILD_IMAGE /app/views ./views
 COPY --from=BUILD_IMAGE /app/node_modules ./node_modules
 
 ENTRYPOINT ["node", "app.js"]
+```
 
 #### ⑤ Pull Pattern 1(CI)
 CI 과정에서 소스 코드 통합, 빌드, 테스트 등의 과정을 마친 후 자동으로 CD 단계로 이어질 수 있게 트리거 역할을 직접 수행하는 방식이다. CI 도구에서 빌드 아티팩트(컨테이너 이미지)를 만들어 Configuration Repository에 기록된 파드 이미지의 버전을 직접 수정한다. Operator(ArgoCD 등)는 Configuration Repository의 변경사항을 탐지하고, CI 도구를 통해 변경되거나 인프라 매니저를 통해 변경된 내용이 탐지되면 배포 환경과 동기화를 진행한다.
