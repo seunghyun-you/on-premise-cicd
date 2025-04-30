@@ -164,7 +164,7 @@ CI 과정에서 소스 코드 통합, 빌드, 테스트 등의 과정을 마친 
 소스 코드의 기능이 개발된 이후 GitHub에 코드를 푸시한 다음 이루어지는 CI/CD 작업 흐름이다. 버저닝 방식 테스트를 위해 구성한 환경으로 Configuration Repository와 배포 환경이 하나로 구성되어 있지만, 실제 환경 적용 시 브랜치와 쿠버네티스 클러스터를 추가 후 ArgoCD에서 Application을 환경별로 구성하면 된다.
 
 <p align="center">
-  <img src="./_image/workflow.png" style="width: 70%;">
+  <img src="./_image/workflow.png" style="width: 60%;">
 </p>
 
 #### dev branch workflow
