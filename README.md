@@ -74,16 +74,20 @@ main, develop, feature, release, hotfix 5개의 브랜치를 사용하는 것을
 자식 브랜치에서 여러 가지 작업이 진행되면서 다수의 커밋이 만들어질 수 있는데, 이 때 부모 브랜치로 병합하는 과정에는 하나의 커밋으로 합쳐서 병합하는 방식이다. 부모 역할을 담당하는 메인 브랜치는 여러 커밋을 하나로 압축하여 관리하기 때문에 깔끔하게 이력을 유지할 수 있고 롤백이 용이해지지만, 세부적인 작업 내역을 메인 브랜치에서 파악하기 어렵다는 단점이 있다.
 
 <p align="center">
-  <img src="./_image/squash_and_merge">
+  <img src="./_image/squash_and_merge.png">
 </p>
 
 #### ③ Semver(Semantic Versioning)
 MAJOR.MINOR.PATCH(예: 1.4.2) 체계를 따르는 버전 관리 방식이다. MAJOR 버전이 0으로 표시되는 경우 아직 개발단계에 있는 불안정한(unstable) 단계라는 의미다. MINOR 버전은 해당 버전 내에서 API 명세가 많이 바뀌지 않았고, 바뀌었더라도(API 기능 추가, 또는 삭제) 이전 버전에 대한 호환성을 보장한다. PATCH는 긴급한 버그 수정이나 사소한 업데이트가 발생한 경우 올라간다.
 Semver가 가지는 문제점이 있는데, 개발자들 마다 버전업의 경계가 다르다는 것이다. 개발 조직 별로 주장하는 표준이 다르다. 그래서, LINE과 같은 경우 이러한 문제를 방지하고자 자체적으로 [HeadVer](https://github.com/line/headver)를 만들어서 관리하고 있다. 그리고, Semver의 버저닝 작업을 개발자가 수동으로 관리하는 경우도 있는데, 이를 [자동화](https://github.com/cycjimmy/semantic-release-action)하는 역할을 DevOps 담당자가 진행한다.
 
-![alt text](./_image/semver.png)
 
-> <span style="color: #008000">[!TIP] ArgoCD와 latest 태그의 업데이트 감지</span>
+<p align="center">
+  <img src="./_image/semver.png" style="width: 50%;">
+</p>
+
+> [!TIP]
+> ArgoCD와 latest 태그의 업데이트 감지
 > - ArgoCD는 기본적으로 이미지 태그가 변경되지 않으면 업데이트가 필요하다고 인식하지 않는다. 
 > - lastest 태그의 컨테이너 이미지에 변경이 발생했어도 태그 이름 자체는 동일하기 때문에 ArgoCD는 변경을 감지하지 못한다.
 > - `imagePullPolicy: Always` 를 설정해도 매니페스트 파일 자체에 변경이 발생 했을 때 업데이트가 진행된다.
@@ -159,15 +163,11 @@ CI 과정에서 소스 코드 통합, 빌드, 테스트 등의 과정을 마친 
 ![alt text](./_image/workflow.png)
 
 #### dev branch workflow
-① 개발 소스 코드 GitHub `dev` 브랜치로 push
-
-② Jenkins에서 Poll SCM 방식으로 변경 사항을 감지 후 파이프라인 트리거 
-
-③ 빌드 후 아티팩트로 `PATCH` 버전을 업데이트 한 다음 Nexus 레지스트리에 이미지 저장
-
-④ Configuration Repository에 있는 values.yaml 파일에서 tag 값을 수정 후 push
-
-⑤ 변경사항을 감지한 ArgoCD에서 업데이트 된 컨테이너 이미지의 버전으로 배포 환경과 동기화 진행
+① 개발 소스 코드 GitHub `dev` 브랜치로 push  
+② Jenkins에서 Poll SCM 방식으로 변경 사항을 감지 후 파이프라인 트리거   
+③ 빌드 후 아티팩트로 `PATCH` 버전을 업데이트 한 다음 Nexus 레지스트리에 이미지 저장  
+④ Configuration Repository에 있는 values.yaml 파일에서 tag 값을 수정 후 push  
+⑤ 변경사항을 감지한 ArgoCD에서 업데이트 된 컨테이너 이미지의 버전으로 배포 환경과 동기화 진행  
 
 #### main branch workflow
 ⑥ dev branch에서 `main` 브랜치 방향으로 `Pull Request` 생성
