@@ -78,23 +78,27 @@ main, develop, feature, release, hotfix 5개의 브랜치를 사용하는 것을
 </p>
 
 #### ③ Semver(Semantic Versioning)
-MAJOR.MINOR.PATCH(예: 1.4.2) 체계를 따르는 버전 관리 방식이다. MAJOR 버전이 0으로 표시되는 경우 아직 개발단계에 있는 불안정한(unstable) 단계라는 의미다. MINOR 버전은 해당 버전 내에서 API 명세가 많이 바뀌지 않았고, 바뀌었더라도(API 기능 추가, 또는 삭제) 이전 버전에 대한 호환성을 보장한다. PATCH는 긴급한 버그 수정이나 사소한 업데이트가 발생한 경우 올라간다.
-Semver가 가지는 문제점이 있는데, 개발자들 마다 버전업의 경계가 다르다는 것이다. 개발 조직 별로 주장하는 표준이 다르다. 그래서, LINE과 같은 경우 이러한 문제를 방지하고자 자체적으로 [HeadVer](https://github.com/line/headver)를 만들어서 관리하고 있다. 그리고, Semver의 버저닝 작업을 개발자가 수동으로 관리하는 경우도 있는데, 이를 [자동화](https://github.com/cycjimmy/semantic-release-action)하는 역할을 DevOps 담당자가 진행한다.
-
+MAJOR.MINOR.PATCH(예: 1.4.2) 체계를 따르는 버전 관리 방식이다. 
 
 <p align="center">
   <img src="./_image/semver.png" style="width: 50%;">
 </p>
 
+- MAJOR 버전이 0으로 표시되는 경우 아직 개발단계에 있는 불안정한(unstable) 단계라는 의미다.
+- MINOR 버전은 해당 버전 내에서 API 명세가 많이 바뀌지 않았고, 바뀌었더라도(API 기능 추가, 또는 삭제) 이전 버전에 대한 호환성을 보장한다.
+- PATCH는 긴급한 버그 수정이나 사소한 업데이트가 발생한 경우 올라간다.
+
+Semver가 가지는 문제점이 있는데, 개발자들 마다 버전업의 경계가 다르다는 것이다. 개발 조직 별로 주장하는 표준이 다르다. 그래서, LINE과 같은 경우 이러한 문제를 방지하고자 자체적으로 [HeadVer](https://github.com/line/headver)를 만들어서 관리하고 있다. 그리고, Semver의 버저닝 작업을 개발자가 수동으로 관리하는 경우도 있는데, 이를 [자동화](https://github.com/cycjimmy/semantic-release-action)하는 역할을 DevOps 담당자가 진행한다.
+
 > [!TIP]
-> <span style="color: #0080000; font-weight: bold;"> ArgoCD와 latest 태그의 업데이트 감지</span>
+> ***ArgoCD와 latest 태그의 업데이트 감지***
 > - ArgoCD는 기본적으로 이미지 태그가 변경되지 않으면 업데이트가 필요하다고 인식하지 않는다. 
 > - lastest 태그의 컨테이너 이미지에 변경이 발생했어도 태그 이름 자체는 동일하기 때문에 ArgoCD는 변경을 감지하지 못한다.
 > - `imagePullPolicy: Always` 를 설정해도 매니페스트 파일 자체에 변경이 발생 했을 때 업데이트가 진행된다.
 > - 이미지의 내용만 변경 되고 매니페스트에는 변화가 없다면, 자동으로 감지되지 않는다.
 
 > [!NOTE]
-> <span style="color: #0000FF; font-weight: bold;"> 실무에서는 특정 버전 태그 사용 권장</span>
+> ***실무에서는 특정 버전 태그 사용 권장***
 > - 명확한 버전 추적과 감사 가능: 문제 발생 시 어떤 버전에서 문제가 되는지 명확하게 확인 가능
 > - 안정적인 롤백: latest를 사용할 경우 과거 버전의 이미지가 어떤 것이었는지 알기 어려움
 > - 배포 환경 일관성 지원: 특전 버전 태그를 사용할 경우 동일한 버전 배포가 보장되기 때문에 예상치 못한 차이를 방지
