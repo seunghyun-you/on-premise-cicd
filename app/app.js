@@ -63,6 +63,7 @@ app.get('/db', async (req, res) => {
       totalRecords: result.rowCount
     });
 
+    // ERROR PAGE 
   } catch (err) {
     console.error('Database connection error:', err);
     res.status(500).render('error', { 
