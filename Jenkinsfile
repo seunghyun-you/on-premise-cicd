@@ -18,8 +18,8 @@ pipeline {
         stage('Create Variable') {
             steps {
                 script {
-                    def services = []
-                    def builds = []
+                    services = []
+                    builds = []
                 }
             }
         }
