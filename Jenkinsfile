@@ -6,7 +6,7 @@ pipeline {
             steps {
                 checkout(
                     [$class: 'GitSCM', 
-                    branches: [[name: ${params.BRANCH}]],
+                    branches: [[name: "${params.BRANCH}"]],
                     userRemoteConfigs: [[
                         url: 'https://github.com/seunghyun-you/on-premise-cicd',
                         credentialsId: 'github-accesskey'
