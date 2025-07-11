@@ -2,24 +2,24 @@ pipeline {
 	agent any
 
 	stages {
-        stage("Checkout") {
-            steps {
-                checkout(
-                    [$class: 'GitSCM', 
-                    branches: [[name: "${params.BRANCH}"]],
-                    userRemoteConfigs: [[
-                        url: 'https://github.com/seunghyun-you/on-premise-cicd',
-                        credentialsId: 'github-accesskey'
-                    ]]
-                    ]
-                )
-            }
-        }
+        // stage("Checkout") {
+        //     steps {
+        //         checkout(
+        //             [$class: 'GitSCM', 
+        //             branches: [[name: ${params.BRANCH}]],
+        //             userRemoteConfigs: [[
+        //                 url: 'https://github.com/seunghyun-you/on-premise-cicd',
+        //                 credentialsId: 'github-accesskey'
+        //             ]]
+        //             ]
+        //         )
+        //     }
+        // }
         stage('Create Variable') {
             steps {
                 script {
-                    services = []
-                    builds = []
+                    def services = []
+                    def builds = []
                 }
             }
         }
