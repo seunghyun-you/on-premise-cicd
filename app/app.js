@@ -73,5 +73,6 @@ app.get('/db', async (req, res) => {
   }
 });
 
+// APP RUNNING
 app.listen(PORT, HOST);
 console.log(`Running on http://${HOST}:${PORT}`);
