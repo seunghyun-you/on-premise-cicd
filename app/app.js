@@ -1,11 +1,11 @@
 const express = require('express');
 const os = require('os');
 const { Pool } = require('pg');
-// 
+
 const PORT = process.env.PORT || 3000;
 const HOST = process.env.HOST || '0.0.0.0';
 
-//
+// DB CONNECTION INFORMATION
 const pool = new Pool({
   host: process.env.DB_HOST || 'localhost',
   port: process.env.DB_PORT || 5432,
@@ -14,15 +14,17 @@ const pool = new Pool({
   database: process.env.DB_NAME || 'node'
 });
 
-// 
+// APP CODE
 const app = express();
 app.set('view engine', 'ejs');
 app.set('views', './views');
 
+// ROOT PAGE
 app.get('/', (req, res) => {
   res.status(200).render('index', { hostname: os.hostname() });
 });
 
+// COLOR PATH PAGE
 app.get('/color/:reqpath', (req, res) => {
   res.status(200).render('color-path', { 
     reqpath: req.params.reqpath,
@@ -30,6 +32,7 @@ app.get('/color/:reqpath', (req, res) => {
   });
 });
 
+// DATABASE PAGE
 app.get('/db', async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM access_information');
