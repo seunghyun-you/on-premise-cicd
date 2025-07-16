@@ -68,25 +68,29 @@ pipeline {
                             def MINOR = parts[1] as int
                             def PATCH = parts[2] as int
 
-                            if (params.BRANCH.contains('dev')) {
-                                def NEW_PATCH = PATCH + 1
-                                NEW_IMAGE_VERSION = "v${MAJOR}.${MINOR}.${NEW_PATCH}"
-                                echo "${NEW_IMAGE_VERSION}"
-                            } else if (params.BRANCH.contains('main')) {
-                                def NEW_MINOR = MINOR + 1
-                                NEW_IMAGE_VERSION = "v${MAJOR}.${NEW_MINOR}.0"
-                                echo "${NEW_IMAGE_VERSION}"
-                            }
+                            def NEW_PATCH = PATCH + 1
+                            NEW_IMAGE_VERSION = "v${MAJOR}.${MINOR}.${NEW_PATCH}"
+                            echo "${NEW_IMAGE_VERSION}"
+
+                            // if (params.BRANCH.contains('dev')) {
+                            //     def NEW_PATCH = PATCH + 1
+                            //     NEW_IMAGE_VERSION = "v${MAJOR}.${MINOR}.${NEW_PATCH}"
+                            //     echo "${NEW_IMAGE_VERSION}"
+                            // } else if (params.BRANCH.contains('main')) {
+                            //     def NEW_MINOR = MINOR + 1
+                            //     NEW_IMAGE_VERSION = "v${MAJOR}.${NEW_MINOR}.0"
+                            //     echo "${NEW_IMAGE_VERSION}"
+                            // }
                         }
                         dir("./${service.NAME}") {
-                            echo "${env.NEXUS_URL}/${service.NAME}:${NEW_IMAGE_VERSION}"
-                            def artifact = docker.build("${env.NEXUS_URL}/${service.NAME}:${NEW_IMAGE_VERSION}")
+                            echo "${env.NEXUS_URL}/${service.NAME}-aiu:${NEW_IMAGE_VERSION}"
+                            def artifact = docker.build("${env.NEXUS_URL}/${service.NAME}-aiu:${NEW_IMAGE_VERSION}")
 
-                            builds.add([NAME: "${service.NAME}", 
+                            builds.add([NAME: "${service.NAME}-aiu", 
                                         VERSION: "${NEW_IMAGE_VERSION}",
                                         ARTIFACT: artifact])
 
-                            echo "Success ${service.NAME} images build: ${NEW_IMAGE_VERSION}"
+                            echo "Success ${service.NAME}-aiu images build: ${NEW_IMAGE_VERSION}"
                         }
                     }
                 }
@@ -105,29 +109,29 @@ pipeline {
                 }
             }
         }
-        stage('Image Update') {
-            agent any
-            steps {
-                script {
-                    builds.each { build ->
-                        withCredentials([gitUsernamePassword(credentialsId: 'github-accesskey')]) {
-                            sh "rm -rf *"
-                            sh "rm -rf .git"
-                            sh "git clone https://github.com/seunghyun-you/on-premise-cicd-manifest.git"
-                            sh "git config --global user.email 'jenkins@example.com'"
-                            sh "git config --global user.name 'Jenkins CI'"
+        // stage('Image Update') {
+        //     agent any
+        //     steps {
+        //         script {
+        //             builds.each { build ->
+        //                 withCredentials([gitUsernamePassword(credentialsId: 'github-accesskey')]) {
+        //                     sh "rm -rf *"
+        //                     sh "rm -rf .git"
+        //                     sh "git clone https://github.com/seunghyun-you/on-premise-cicd-manifest.git"
+        //                     sh "git config --global user.email 'jenkins@example.com'"
+        //                     sh "git config --global user.name 'Jenkins CI'"
 
-                            dir ('on-premise-cicd-manifest') {
-                                sh "sed -i 's/tag: \"v[0-9]\\+\\.[0-9]\\+\\.[0-9]\\+\"/tag: \"${build.VERSION}\"/g' ${build.NAME}/values.yaml"
+        //                     dir ('on-premise-cicd-manifest') {
+        //                         sh "sed -i 's/tag: \"v[0-9]\\+\\.[0-9]\\+\\.[0-9]\\+\"/tag: \"${build.VERSION}\"/g' ${build.NAME}/values.yaml"
                                 
-                                sh "git add ."
-                                sh "git commit -m 'Update image tag to ${build.VERSION}'"
-                                sh "git push origin main"
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        //                         sh "git add ."
+        //                         sh "git commit -m 'Update image tag to ${build.VERSION}'"
+        //                         sh "git push origin main"
+        //                     }
+        //                 }
+        //             }
+        //         }
+        //     }
+        // }
     }
 }
