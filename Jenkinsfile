@@ -50,7 +50,7 @@ pipeline {
                             passwordVariable: 'NEXUS_PASS')]) {
 
                             def CURL_RESULT = sh(
-                                script: "curl -s -u ${NEXUS_USER}:${NEXUS_PASS} ${NEXUS_URL}/v2/${service.NAME}/tags/list",
+                                script: "curl -s -u ${NEXUS_USER}:${NEXUS_PASS} ${NEXUS_URL}/v2/${service.NAME}-aiu/tags/list",
                                 returnStdout: true
                             )
                             echo "${CURL_RESULT}"
