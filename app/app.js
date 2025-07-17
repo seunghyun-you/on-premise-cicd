@@ -5,7 +5,7 @@ const { Pool } = require('pg');
 const PORT = process.env.PORT || 3000;
 const HOST = process.env.HOST || '0.0.0.0';
 
-// DB CONNECTION INFORMATION             
+// DB CONNECTION INFORMATION                   
 const pool = new Pool({
   host: process.env.DB_HOST || 'localhost',
   port: process.env.DB_PORT || 5432,
