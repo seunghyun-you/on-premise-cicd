@@ -4,6 +4,7 @@ const { Pool } = require('pg');
 
 const PORT = process.env.PORT || 3000;
 const HOST = process.env.HOST || '0.0.0.0';
+const APPNAME = process.env.APPNAME || 'app';
 
 // DB CONNECTION INFORMATION                   
 const pool = new Pool({
@@ -26,7 +27,7 @@ app.get('/', (req, res) => {
 
 // COLOR PATH PAGE
 app.get('/color/:reqpath', (req, res) => {
-  res.status(200).render('color-path', { 
+  res.status(200).render('color-path', {
     reqpath: req.params.reqpath,
     hostname: os.hostname()
   });
@@ -57,16 +58,16 @@ app.get('/db', async (req, res) => {
       `;
     });
 
-    res.status(200).render('db', { 
+    res.status(200).render('db', {
       hostname: os.hostname(),
       tableRows: tableRows,
       totalRecords: result.rowCount
     });
 
-  // ERROR PAGE 
+    // ERROR PAGE 
   } catch (err) {
     console.error('Database connection error:', err);
-    res.status(500).render('error', { 
+    res.status(500).render('error', {
       hostname: os.hostname(),
       error: err.message
     });
@@ -76,3 +77,5 @@ app.get('/db', async (req, res) => {
 // APP RUNNING 
 app.listen(PORT, HOST);
 console.log(`Running on http://${HOST}:${PORT}`);
+const timestamp = new Date().toISOString();
+console.log(`[${timestamp}]: `, `${APPNAME}`);
